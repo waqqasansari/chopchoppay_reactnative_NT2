@@ -12,8 +12,8 @@ export default function Index() {
     const router = useRouter();
 
     const handleGetStarted = () => {
-        // Navigate to the main app (tabs)
-        router.replace('/(tabs)');
+        // Navigate to the authentication screen
+        router.push('/login');
     };
 
     const handleLearnMore = () => {
