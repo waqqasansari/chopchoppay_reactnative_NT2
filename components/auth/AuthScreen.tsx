@@ -63,7 +63,8 @@ export const AuthScreen = () => {
         // Simulate network request
         setTimeout(() => {
             setIsLoading(false);
-            router.replace('/(tabs)');
+            // Navigate to onboarding
+            router.replace('/onboarding');
         }, 1500);
     };
 
