@@ -1,98 +1,269 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { Colors } from '@/constants/theme';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import React, { useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Animated, { Extrapolation, interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { BalanceCard } from '../../components/groups/BalanceCard';
+import { GroupCard, GroupData } from '../../components/groups/GroupCard';
+import { HomeHeader } from '../../components/groups/HomeHeader';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+// Mock Data
+const GROUP_DATA: GroupData = {
+  id: 1,
+  name: "BBQ party lko s s",
+  avatar_url: "👥",
+  total_members: 5,
+  total_expenses: 51,
+  last_activity: "2025-12-12T15:30:00.159598",
+  net_balance: 31857.06,
+  activity_trend: 4,
+  balance_trend: 60.0,
+  currency: "USD",
+  currency_symbol: "$",
+  description: "Lucknow",
+  members: [
+    {
+      id: 2,
+      name: "Shobhit Sundriyal",
+      avatar: "https://example.com/avatar1.jpg",
+      balance: -31139.27
+    },
+    {
+      id: 4,
+      name: "Kamran",
+      avatar: "https://example.com/avatar3.jpg",
+      balance: -2076.91
+    },
+    {
+      id: 7,
+      name: "Michael Lee",
+      avatar: "https://example.com/avatar8.jpg",
+      balance: 263.73
+    },
+    {
+      id: 1,
+      name: "You",
+      avatar: "https://example.com/",
+      balance: 31857.06
+    },
+    {
+      id: 6,
+      name: "Emily Smith",
+      avatar: "https://example.com/avatar5.jpg",
+      balance: -1478.1
+    }
+  ],
+  total_amount: 37870.96999999998,
+  last_activity_relative: "9 days ago",
+  total_owed: 0.0,
+  total_owed_to_you: 31857.06
+};
 
-export default function HomeScreen() {
+// Creating a list for the FlatList
+const GROUPS_LIST = [
+  GROUP_DATA,
+  {
+    ...GROUP_DATA,
+    id: 2,
+    name: "Summer Trip 2024",
+    avatar_url: "✈️",
+    total_members: 8,
+    net_balance: -340.20,
+    currency_symbol: "$",
+    total_amount: 2850.00,
+    last_activity_relative: "2 hours ago",
+  },
+  {
+    ...GROUP_DATA,
+    id: 3,
+    name: "Apartment 4B",
+    avatar_url: "🏠",
+    total_members: 3,
+    net_balance: 0, // Settled
+    currency_symbol: "$",
+    total_amount: 1200.00,
+    last_activity_relative: "1 day ago",
+  },
+  {
+    ...GROUP_DATA,
+    id: 4,
+    name: "Weekend Getaway",
+    avatar_url: "🚗",
+    total_members: 4,
+    net_balance: 150.50,
+    currency_symbol: "$",
+    total_amount: 800.00,
+    last_activity_relative: "3 days ago",
+  },
+  {
+    ...GROUP_DATA,
+    id: 5,
+    name: "Office Lunch",
+    avatar_url: "🍔",
+    total_members: 12,
+    net_balance: -45.00,
+    currency_symbol: "$",
+    total_amount: 350.00,
+    last_activity_relative: "Yesterday",
+  },
+  {
+    ...GROUP_DATA,
+    id: 6,
+    name: "Mom's Birthday Gift",
+    avatar_url: "🎁",
+    total_members: 3,
+    net_balance: 50.00,
+    currency_symbol: "$",
+    total_amount: 150.00,
+    last_activity_relative: "5 days ago",
+  },
+  {
+    ...GROUP_DATA,
+    id: 7,
+    name: "Spotify Family Plan",
+    avatar_url: "🎵",
+    total_members: 6,
+    net_balance: -12.00,
+    currency_symbol: "$",
+    total_amount: 17.99,
+    last_activity_relative: "1 week ago",
+  },
+  {
+    ...GROUP_DATA,
+    id: 8,
+    name: "Football Team",
+    avatar_url: "⚽",
+    total_members: 22,
+    net_balance: 0,
+    currency_symbol: "$",
+    total_amount: 500.00,
+    last_activity_relative: "2 weeks ago",
+  }
+];
+
+export default function GroupsScreen() {
+  const insets = useSafeAreaInsets();
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme ?? 'light'];
+  const [activeTab, setActiveTab] = useState<'Groups' | 'Friends' | 'Activity'>('Groups');
+
+  const scrollY = useSharedValue(0);
+
+  const scrollHandler = useAnimatedScrollHandler((event) => {
+    scrollY.value = event.contentOffset.y;
+  });
+
+  const balanceCardStyle = useAnimatedStyle(() => {
+    const scale = interpolate(scrollY.value, [0, 150], [1, 0.9], Extrapolation.CLAMP);
+    const opacity = interpolate(scrollY.value, [0, 150], [1, 0], Extrapolation.CLAMP);
+
+    return {
+      opacity,
+      transform: [{ scale }],
+    };
+  });
+
+  const renderListHeader = () => (
+    <View>
+      <Animated.View style={balanceCardStyle}>
+        <BalanceCard />
+      </Animated.View>
+
+      {/* Filter Tabs */}
+      <View style={styles.tabContainer}>
+        {(['Groups', 'Friends', 'Activity'] as const).map((tab) => (
+          <TouchableOpacity
+            key={tab}
+            style={[
+              styles.tab,
+              activeTab === tab && styles.activeTab
+            ]}
+            onPress={() => setActiveTab(tab)}
+          >
+            <Text style={[
+              styles.tabText,
+              activeTab === tab && styles.activeTabText
+            ]}>{tab}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {/* Section Header */}
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>Active Groups</Text>
+        <TouchableOpacity>
+          <Text style={styles.viewAllText}>View All</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
-
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
+      <HomeHeader scrollY={scrollY} />
+      <Animated.FlatList
+        data={GROUPS_LIST}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => <GroupCard group={item} />}
+        contentContainerStyle={styles.listContent}
+        ListHeaderComponent={renderListHeader}
+        showsVerticalScrollIndicator={false}
+        onScroll={scrollHandler}
+        scrollEventThrottle={16}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+    backgroundColor: '#f9fafb', // Gray-50
+  },
+  listContent: {
+    paddingHorizontal: 20,
+    paddingBottom: 100, // Space for bottom tab bar
+  },
+  tabContainer: {
     flexDirection: 'row',
+    marginBottom: 24,
+    gap: 12,
+  },
+  tab: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#f3f4f6',
+  },
+  activeTab: {
+    backgroundColor: '#111827', // Gray-900
+    borderColor: '#111827',
+  },
+  tabText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#6b7280',
+  },
+  activeTabText: {
+    color: '#ffffff',
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    gap: 8,
+    marginBottom: 16,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1f2937',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  viewAllText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#8b5cf6', // Violet
   },
 });
