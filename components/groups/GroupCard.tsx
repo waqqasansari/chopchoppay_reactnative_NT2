@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export interface GroupMember {
     id: number;
@@ -31,9 +32,10 @@ export interface GroupData {
 
 interface GroupCardProps {
     group: GroupData;
+    onPress?: () => void;
 }
 
-export const GroupCard: React.FC<GroupCardProps> = ({ group }) => {
+export const GroupCard: React.FC<GroupCardProps> = ({ group, onPress }) => {
     // Determine if user is owed money or owes money
     // The JSON has total_owed_to_you as positive. If net_balance is positive, you are owed?
     // Let's assume net_balance > 0 means you are owed.
@@ -45,12 +47,12 @@ export const GroupCard: React.FC<GroupCardProps> = ({ group }) => {
     const statusText = isOwed ? 'YOU ARE OWED' : isDebt ? 'YOU OWE' : 'SETTLED';
     const amountText = isSettled ? 'Settled' : `${group.currency_symbol}${Math.abs(group.net_balance).toFixed(2)}`;
 
-    // Get first 3 members for avatars
+
     const displayMembers = group.members.slice(0, 3);
     const extraMembersCalls = group.total_members - 3;
 
     return (
-        <View style={styles.card}>
+        <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.9}>
             <View style={styles.headerRow}>
                 {/* Group Icon */}
                 <View style={styles.iconContainer}>
@@ -109,7 +111,7 @@ export const GroupCard: React.FC<GroupCardProps> = ({ group }) => {
                     </Text>
                 </View>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 };
 
