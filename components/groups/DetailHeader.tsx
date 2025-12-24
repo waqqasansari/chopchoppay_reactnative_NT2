@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import Animated, { Extrapolation, interpolate, SharedValue, useAnimatedStyle } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface DetailHeaderProps {
     scrollY: SharedValue<number>;
@@ -12,6 +13,7 @@ interface DetailHeaderProps {
 
 export const DetailHeader: React.FC<DetailHeaderProps> = ({ scrollY, group }) => {
     const router = useRouter();
+    const insets = useSafeAreaInsets();
 
     const titleStyle = useAnimatedStyle(() => {
         const translateY = interpolate(scrollY.value, [0, 60], [0, -5], Extrapolation.CLAMP);
@@ -47,7 +49,7 @@ export const DetailHeader: React.FC<DetailHeaderProps> = ({ scrollY, group }) =>
     });
 
     return (
-        <Animated.View style={[styles.container, containerStyle]}>
+        <Animated.View style={[styles.container, containerStyle, { paddingTop: insets.top + 10 }]}>
             <TouchableOpacity
                 style={styles.iconButton}
                 onPress={() => router.back()}
@@ -88,7 +90,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingHorizontal: 16,
-        paddingTop: 60, // Adjust for status bar
         paddingBottom: 16,
         backgroundColor: '#f9fafb', // Match bg
         zIndex: 10,

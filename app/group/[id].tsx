@@ -4,7 +4,8 @@ import { ExpenseList } from '@/components/groups/ExpenseList';
 import { GroupTabs } from '@/components/groups/GroupTabs';
 import { SummaryGrid } from '@/components/groups/SummaryGrid';
 import { GROUPS_LIST } from '@/constants/data';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { BlurView } from 'expo-blur';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated';
@@ -25,9 +26,22 @@ export default function GroupDetailScreen() {
 
     return (
         <View style={styles.container}>
-            {/* Background Blobs */}
-            <View style={styles.blobBlue} />
-            <View style={styles.blobPink} />
+            <Stack.Screen options={{ headerShown: false }} />
+
+            {/* Background Blobs with Blur */}
+            <View style={StyleSheet.absoluteFill}>
+                <View style={styles.blobBlue} />
+                <View style={styles.blobPink} />
+                <BlurView
+                    style={StyleSheet.absoluteFill}
+                    intensity={80} // High intensity to diffuse the blobs
+                    tint="light" // Matches the light theme
+                    experimentalBlurMethod="dimezisBlurView" // Better performance/visuals on Android if available in recent Expo
+                />
+            </View>
+
+            {/* Header - Fixed at Top */}
+            <DetailHeader scrollY={scrollY} group={group} />
 
             <Animated.ScrollView
                 style={styles.scrollView}
@@ -35,11 +49,8 @@ export default function GroupDetailScreen() {
                 onScroll={scrollHandler}
                 scrollEventThrottle={16}
                 showsVerticalScrollIndicator={false}
-                stickyHeaderIndices={[0, 3]} // Header (0) and Tabs (3) are sticky
+                stickyHeaderIndices={[2]} // Tabs are now index 2 (Summary=0, Actions=1, Tabs=2)
             >
-                {/* Header - Sticky */}
-                <DetailHeader scrollY={scrollY} group={group} />
-
                 {/* Summary Grid */}
                 <SummaryGrid scrollY={scrollY} group={group} />
 
@@ -77,7 +88,7 @@ const styles = StyleSheet.create({
         paddingBottom: 40,
     },
     stickyTabsContainer: {
-        marginTop: 8,
+        paddingTop: 8,
         backgroundColor: '#f4f7f9', // Ensuring opaque background when sticky
         zIndex: 5,
         paddingBottom: 4,
