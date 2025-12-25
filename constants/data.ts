@@ -3,6 +3,18 @@ export interface GroupMember {
     name: string;
     avatar: string;
     balance: number;
+    role?: string; // e.g., 'editor', 'admin'
+}
+
+export interface ActivityItem {
+    id: number;
+    type: 'payment' | 'expense' | 'system' | 'create_expense';
+    userName: string;
+    timeAgo: string;
+    action: string;
+    amount?: string; // Pre-formatted string like "(49.99 USD)"
+    timestamp: string; // e.g. "Dec 12, 09:37 PM"
+    icon?: string;
 }
 
 export interface GroupData {
@@ -19,6 +31,7 @@ export interface GroupData {
     currency_symbol: string;
     description: string;
     members: GroupMember[];
+    activities: ActivityItem[];
     total_amount: number;
     last_activity_relative: string;
     total_owed: number;
@@ -42,32 +55,74 @@ const DEFAULT_GROUP: GroupData = {
         {
             id: 2,
             name: "Shobhit Sundriyal",
-            avatar: "https://example.com/avatar1.jpg",
-            balance: -31139.27
+            avatar: "https://ui-avatars.com/api/?name=Shobhit+Sundriyal&background=3b82f6&color=fff",
+            balance: -31139.27,
+            role: 'editor'
         },
         {
             id: 4,
             name: "Kamran",
-            avatar: "https://example.com/avatar3.jpg",
+            avatar: "https://ui-avatars.com/api/?name=Kamran&background=10b981&color=fff",
             balance: -2076.91
         },
         {
             id: 7,
             name: "Michael Lee",
-            avatar: "https://example.com/avatar8.jpg",
+            avatar: "https://ui-avatars.com/api/?name=Michael+Lee&background=f59e0b&color=fff",
             balance: 263.73
         },
         {
             id: 1,
             name: "You",
-            avatar: "https://example.com/",
+            avatar: "https://ui-avatars.com/api/?name=You&background=8b5cf6&color=fff",
             balance: 31857.06
         },
         {
             id: 6,
             name: "Emily Smith",
-            avatar: "https://example.com/avatar5.jpg",
+            avatar: "https://ui-avatars.com/api/?name=Emily+Smith&background=ec4899&color=fff",
             balance: -1478.1
+        }
+    ],
+    activities: [
+        {
+            id: 1,
+            type: 'system',
+            userName: 'Waqqas Ansari',
+            timeAgo: '2 weeks ago',
+            action: 'Shared network graph with 5 members',
+            timestamp: 'Dec 12, 09:37 PM',
+            icon: 'info'
+        },
+        {
+            id: 2,
+            type: 'create_expense',
+            userName: 'Waqqas Ansari',
+            timeAgo: '2 weeks ago',
+            action: "Created expense 'Recurring monthly payment for gym'",
+            amount: '(49.99 USD)',
+            timestamp: 'Dec 12, 09:00 PM',
+            icon: 'receipt-long'
+        },
+        {
+            id: 3,
+            type: 'create_expense',
+            userName: 'Waqqas Ansari',
+            timeAgo: '2 weeks ago',
+            action: "Created expense 'None'",
+            amount: '(50.0 USD)',
+            timestamp: 'Dec 12, 09:00 PM',
+            icon: 'receipt-long'
+        },
+        {
+            id: 4,
+            type: 'create_expense',
+            userName: 'Waqqas Ansari',
+            timeAgo: '2 weeks ago',
+            action: "Created expense 'Recurring monthly payment for gym'",
+            amount: '(49.99 USD)',
+            timestamp: 'Dec 12, 08:00 PM',
+            icon: 'receipt-long'
         }
     ],
     total_amount: 37870.96999999998,

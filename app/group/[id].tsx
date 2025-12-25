@@ -1,13 +1,15 @@
 import { ActionButtons } from '@/components/groups/ActionButtons';
+import { ActivityList } from '@/components/groups/ActivityList';
 import { DetailHeader } from '@/components/groups/DetailHeader';
 import { ExpenseList } from '@/components/groups/ExpenseList';
 import { GroupTabs } from '@/components/groups/GroupTabs';
+import { MembersList } from '@/components/groups/MembersList';
 import { SummaryGrid } from '@/components/groups/SummaryGrid';
 import { GROUPS_LIST } from '@/constants/data';
 import { BlurView } from 'expo-blur';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, StyleSheet, View } from 'react-native';
 import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated';
 
 const { width } = Dimensions.get('window');
@@ -64,13 +66,9 @@ export default function GroupDetailScreen() {
                 </View>
 
                 {/* Content based on Tab */}
-                {activeTab === 'Expenses' ? (
-                    <ExpenseList />
-                ) : (
-                    <View style={styles.placeholderTab}>
-                        <Text style={styles.placeholderText}>No {activeTab.toLowerCase()} yet.</Text>
-                    </View>
-                )}
+                {activeTab === 'Expenses' && <ExpenseList />}
+                {activeTab === 'Members' && <MembersList group={group} />}
+                {activeTab === 'Activity' && <ActivityList group={group} />}
             </Animated.ScrollView>
         </View>
     );
