@@ -78,6 +78,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f4f7f9', // background-light
+        overflow: 'hidden', // Prevents blobs from causing scroll
     },
     scrollView: {
         flex: 1,
