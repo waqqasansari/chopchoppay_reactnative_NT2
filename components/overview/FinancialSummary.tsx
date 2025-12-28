@@ -6,8 +6,8 @@ import { StyleSheet, Text, View } from 'react-native';
 
 export default function FinancialSummary() {
     const colorScheme = useColorScheme();
-    const theme = Colors[colorScheme ?? 'light'];
-    const isDark = colorScheme === 'dark';
+    const theme = Colors['light'];
+    const isDark = false;
 
     return (
         <View style={styles.container}>

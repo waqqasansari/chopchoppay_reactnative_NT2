@@ -15,8 +15,8 @@ const data = [
 
 export default function ActivityChart() {
     const colorScheme = useColorScheme();
-    const theme = Colors[colorScheme ?? 'light'];
-    const isDark = colorScheme === 'dark';
+    const theme = Colors['light'];
+    const isDark = false;
 
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 

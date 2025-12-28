@@ -2,19 +2,26 @@ import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function OverviewHeader() {
     const colorScheme = useColorScheme();
-    const theme = Colors[colorScheme ?? 'light'];
-    const isDark = colorScheme === 'dark';
+    const router = useRouter();
+    const theme = Colors['light'];
+    const isDark = false;
 
     return (
         <View style={styles.container}>
-            <View>
-                <Text style={[styles.title, { color: theme.text }]}>Overview</Text>
-                <Text style={[styles.subtitle, { color: theme.textSecondary }]}>Financial Summary</Text>
+            <View style={styles.headerLeft}>
+                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+                    <Ionicons name="chevron-back" size={24} color={theme.text} />
+                </TouchableOpacity>
+                <View>
+                    <Text style={[styles.title, { color: theme.text }]}>Overview</Text>
+                    <Text style={[styles.subtitle, { color: theme.textSecondary }]}>Financial Summary</Text>
+                </View>
             </View>
             <View style={styles.actions}>
                 <TouchableOpacity
@@ -46,6 +53,24 @@ const styles = StyleSheet.create({
         paddingHorizontal: 24,
         paddingTop: 60, // approximate pt-14
         paddingBottom: 16,
+    },
+    headerLeft: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+    },
+    backButton: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#FFFFFF', // Assuming light theme for button bg as well
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 2,
+        elevation: 2,
     },
     title: {
         fontSize: 24,

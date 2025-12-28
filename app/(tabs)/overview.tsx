@@ -15,7 +15,7 @@ import StatsGrid from '@/components/overview/StatsGrid';
 export default function OverviewScreen() {
     const colorScheme = useColorScheme();
     const theme = Colors[colorScheme ?? 'light'];
-    const isDark = colorScheme === 'dark';
+    const isDark = false;
 
     return (
         <View style={[styles.container, { backgroundColor: isDark ? theme.background : '#f4f7f9' }]}>

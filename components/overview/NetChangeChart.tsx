@@ -1,5 +1,4 @@
 import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import React, { useState } from 'react';
 import { LayoutChangeEvent, StyleSheet, Text, View } from 'react-native';
 import Svg, { Line, Rect } from 'react-native-svg';
@@ -14,9 +13,8 @@ const data = [
 ];
 
 export default function NetChangeChart() {
-    const colorScheme = useColorScheme();
-    const theme = Colors[colorScheme ?? 'light'];
-    const isDark = colorScheme === 'dark';
+    const theme = Colors['light'];
+    const isDark = false;
 
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 

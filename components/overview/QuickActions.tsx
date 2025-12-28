@@ -6,8 +6,8 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 
 export default function QuickActions() {
     const colorScheme = useColorScheme();
-    const theme = Colors[colorScheme ?? 'light'];
-    const isDark = colorScheme === 'dark';
+    const theme = Colors['light'];
+    const isDark = false;
 
     const actions = [
         { label: 'Add Expense', icon: 'card-outline', color: theme.primary, bg: isDark ? 'rgba(127, 19, 236, 0.1)' : 'rgba(127, 19, 236, 0.1)' },
